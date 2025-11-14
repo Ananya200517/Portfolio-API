@@ -1,0 +1,17 @@
+{
+  "name": "portfolio_api",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.1.5",
+    "resend": "^3.2.0",
+    "zod": "^3.23.8"
+  }
+}
