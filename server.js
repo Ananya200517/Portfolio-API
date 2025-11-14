@@ -5,6 +5,13 @@ import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { Resend } from "resend";
 
+// --- sanity log (safe) ---
+const hasKey = !!process.env.RESEND_API_KEY;
+const keyLen = (process.env.RESEND_API_KEY || '').length;
+const keyPrefix = (process.env.RESEND_API_KEY || '').slice(0, 3);
+console.log(`[boot] RESEND_API_KEY present=${hasKey} len=${keyLen} prefix=${keyPrefix}`);
+
+
 const app = express();
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
