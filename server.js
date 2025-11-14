@@ -5,18 +5,27 @@ import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { Resend } from "resend";
 
-// --- sanity log (safe) ---
-const hasKey = !!process.env.RESEND_API_KEY;
-const keyLen = (process.env.RESEND_API_KEY || '').length;
-const keyPrefix = (process.env.RESEND_API_KEY || '').slice(0, 3);
-console.log(`[boot] RESEND_API_KEY present=${hasKey} len=${keyLen} prefix=${keyPrefix}`);
-
-
 const app = express();
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const TO_EMAIL = "kothariananyashree@gmail.com";
-const FROM_EMAIL = "Portfolio Contact <contact@yourdomain.com>"; // set this up in Resend
+const FROM_EMAIL = "Portfolio Contact onboarding@resend.dev"; 
+
+// inside your POST /contact
+await resend.emails.send({
+  from: `${FROM_NAME} <${FROM_EMAIL}>`, // MUST be onboarding@resend.dev
+  to: TO_EMAIL,                          // you receive messages here
+  reply_to: payload.email,               // so Reply goes to the sender
+  subject: payload.subject || "New portfolio message",
+  text: [
+    `Name: ${payload.name}`,
+    `Email: ${payload.email}`,
+    `Subject: ${payload.subject || "(none)"}`,
+    "",
+    payload.message
+  ].join("\n")
+});
+
 
 // Allow your Netlify site + local dev
 const allowedOrigins = [
