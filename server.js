@@ -6,24 +6,30 @@ import { z } from "zod";
 import { Resend } from "resend";
 
 const app = express();
-
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_NAME = "Portfolio Contact";
 const TO_EMAIL = "kothariananyashree@gmail.com";
-const FROM_EMAIL = "Portfolio Contact onboarding@resend.dev"; 
+const FROM_EMAIL = "onboarding@resend.dev"; 
 
-// inside your POST /contact
-await resend.emails.send({
-  from: `${FROM_NAME} <${FROM_EMAIL}>`, // MUST be onboarding@resend.dev
-  to: TO_EMAIL,                          // you receive messages here
-  reply_to: payload.email,               // so Reply goes to the sender
-  subject: payload.subject || "New portfolio message",
-  text: [
-    `Name: ${payload.name}`,
-    `Email: ${payload.email}`,
-    `Subject: ${payload.subject || "(none)"}`,
-    "",
-    payload.message
-  ].join("\n")
+app.use(express.json());
+
+app.post('/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL, 
+      to:   TO_EMAIL,
+      reply_to: email,          // lets you reply directly to the sender
+      subject: subject || 'New portfolio message',
+      text: `Name: ${name}\nEmail: ${email}\n\n${message}`
+    });
+
+    if (result.error) throw new Error(result.error.message);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message || 'Send failed' });
+  }
 });
 
 
